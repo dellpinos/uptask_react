@@ -1,6 +1,9 @@
-import { Outlet } from "react-router-dom"
-import Logo from "@/components/Logo"
-import NavMenu from "@/components/NavMenu"
+import { Outlet } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Logo from "@/components/Logo";
+import NavMenu from "@/components/NavMenu";
+
 function AppLayout() {
   return (
     <>
@@ -23,6 +26,11 @@ function AppLayout() {
         <footer className="py-5">
             <p className="text-center">Todos los derechos reservados - TaskTrack3 - { new Date().getFullYear() }</p>
         </footer>
+        
+        <ToastContainer 
+            // pauseOnFocusLoss={false}
+            // pauseOnHover={false}
+        />
     </>
   )
 }
