@@ -10,7 +10,7 @@ function AppLayout() {
         <header
             className="bg-gray-800 py-5"
         >
-            <div className="max-w-screen-2xl mx-auto flex flex-col lg:flex-row justify-between items-center pl-10">
+            <div className="max-w-screen-2xl mx-auto flex flex-col lg:flex-row justify-between items-center lg:pl-10">
                 <div className=" w-80">
                     < Logo />
                 </div>
