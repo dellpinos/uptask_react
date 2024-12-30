@@ -1,13 +1,13 @@
 import { getProjectById } from "@/api/ProjectAPI";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import EditProjectForm from "@/components/projects/EditProjectForm";
 import AddTaskModal from "@/components/tasks/AddTaskModal";
 
 
 export default function ProjectDetailsView() {
 
     const navigate = useNavigate();
+    const location = useLocation();
     const params = useParams();
     const projectId = params.projectId!;
 
@@ -27,7 +27,7 @@ export default function ProjectDetailsView() {
                 <button 
                     type="button" 
                     className="bg-purple-400 hover:bg-purple-500 px-10 py-3 text-white text-xl font-bold cursor-pointer transition-colors"
-                    onClick={() => navigate('?newTask=true')}
+                    onClick={() => navigate(location.pathname + '?newTask=true')}
                     >Agregar Tarea</button>
         
             </nav>
