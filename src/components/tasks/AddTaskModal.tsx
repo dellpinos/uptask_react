@@ -35,6 +35,7 @@ export default function AddTaskModal() {
         mutationFn: createTask,
         onSuccess: (data) => {
             queryClient.invalidateQueries({queryKey: ['editProject', projectId]});
+            queryClient.invalidateQueries({ queryKey: ['project', projectId]});
             toast.success(data);
             reset();
             navigate(location.pathname, {replace: true});
