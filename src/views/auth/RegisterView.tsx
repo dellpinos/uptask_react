@@ -136,6 +136,7 @@ export default function RegisterView() {
             </form>
             <nav className="mt-10 flex flex-col space-y-4">
                 <Link to={'/auth/login'} className="text-center text-gray-300 font-normal">Ya tienes cuenta? Iniciar Sesión</Link>
+                <Link to={'/auth/forgot-password'} className="text-center text-gray-300 font-normal">Olvidaste tu contraseña? Restablecer</Link>
             </nav>
 
         </>
