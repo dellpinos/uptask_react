@@ -43,3 +43,16 @@ export async function getProjectTeam(projectId : Project['_id']) {
         }
     }
 }
+
+export async function removeUserFromProject({projectId, userId} : {projectId: Project['_id'], userId: TeamMember['_id']}) {
+    try {
+        const url = `/projects/${projectId}/team/${userId}`;
+        const { data } = await api.delete(url);
+        return data;
+        
+    } catch (error) {
+        if(isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+    }
+}

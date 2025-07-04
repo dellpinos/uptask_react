@@ -1,25 +1,28 @@
 import { Fragment } from 'react'
-import { Menu, Transition } from '@headlessui/react'
+import { Menu, MenuButton, Transition, MenuItems, MenuItem } from '@headlessui/react'
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
-
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAllProjects, deleteProject } from "@/api/ProjectAPI";
 import { toast } from 'react-toastify';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function DashboardView() {
 
+    const { data: user, isLoading: authLoading } = useAuth();
     const { data, isLoading } = useQuery({
         queryKey: ['projects'],
         queryFn: getAllProjects
     });
+
+    console.log(data);
 
     const queryClient = useQueryClient();
     const { mutate } = useMutation({
         mutationFn: deleteProject,
         onSuccess: (data) => {
             toast.success(data);
-            queryClient.invalidateQueries({queryKey: ['projects']});
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
 
         },
         onError: (error) => {
@@ -27,14 +30,14 @@ export default function DashboardView() {
         }
     })
 
-    const handleDelete = (projectId : string) => {
+    const handleDelete = (projectId: string) => {
         mutate(projectId)
     }
 
-    if (isLoading) return 'Cargando...'
+    if (isLoading && authLoading) return 'Cargando...'
 
 
-    if (data) return (
+    if (data && user) return (
         <>
             <h1 className="text-5xl font-black" >Mis Proyectos</h1>
             <p className="text-2xl font-light text-gray-500 mt-5">Administra tus proyectos</p>
@@ -67,39 +70,44 @@ export default function DashboardView() {
                             </div>
                             <div className="flex shrink-0 items-center gap-x-6">
                                 <Menu as="div" className="relative flex-none">
-                                    <Menu.Button className="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
+                                    <MenuButton className="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
                                         <span className="sr-only">opciones</span>
                                         <EllipsisVerticalIcon className="h-9 w-9" aria-hidden="true" />
-                                    </Menu.Button>
+                                    </MenuButton>
                                     <Transition as={Fragment} enter="transition ease-out duration-100"
                                         enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100"
                                         leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100"
                                         leaveTo="transform opacity-0 scale-95">
-                                        <Menu.Items
+                                        <MenuItems
                                             className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
                                         >
-                                            <Menu.Item>
-                                                <Link to={`/projects/${project._id}`}
-                                                    className='block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-100'>
-                                                    Ver Proyecto
-                                                </Link>
-                                            </Menu.Item>
-                                            <Menu.Item>
-                                                <Link to={`/projects/${project._id}/edit`}
-                                                    className='block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-100'>
-                                                    Editar Proyecto
-                                                </Link>
-                                            </Menu.Item>
-                                            <Menu.Item>
-                                                <button
-                                                    type='button'
-                                                    className='block px-3 py-1 text-sm leading-6 text-red-500 hover:bg-slate-100 w-full text-left'
-                                                    onClick={() => { handleDelete(project._id) }}
-                                                >
-                                                    Eliminar Proyecto
-                                                </button>
-                                            </Menu.Item>
-                                        </Menu.Items>
+                                            {project.manager === user._id && (
+                                                <>
+                                                    <MenuItem>
+                                                        <Link to={`/projects/${project._id}`}
+                                                            className='block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-100'>
+                                                            Ver Proyecto
+                                                        </Link> { /* No veo este boton */}
+                                                    </MenuItem>
+                                                    <MenuItem>
+                                                        <Link to={`/projects/${project._id}/edit`}
+                                                            className='block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-100'>
+                                                            Editar Proyecto
+                                                        </Link>{ /* No veo este boton */}
+                                                    </MenuItem>
+                                                    <MenuItem>
+                                                        <button
+                                                            type='button'
+                                                            className='block px-3 py-1 text-sm leading-6 text-red-500 hover:bg-slate-100 w-full text-left'
+                                                            onClick={() => { handleDelete(project._id) }}
+                                                        >
+                                                            Eliminar Proyecto
+                                                        </button>{ /* Si veo este boton */}
+                                                    </MenuItem>
+                                                </>
+                                            )}
+
+                                        </MenuItems>
                                     </Transition>
                                 </Menu>
                             </div>
