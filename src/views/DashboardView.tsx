@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAllProjects, deleteProject } from "@/api/ProjectAPI";
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks/useAuth';
+import { isManager } from '@/utils/policies';
 
 export default function DashboardView() {
 
@@ -14,8 +15,6 @@ export default function DashboardView() {
         queryKey: ['projects'],
         queryFn: getAllProjects
     });
-
-    console.log(data);
 
     const queryClient = useQueryClient();
     const { mutate } = useMutation({
@@ -57,7 +56,7 @@ export default function DashboardView() {
                             <div className="flex min-w-0 gap-x-4">
                                 <div className="min-w-0 flex-auto space-y-2">
                                     <div className='mb-2'>
-                                        {project.manager === user._id ?
+                                        {isManager(project.manager, user._id) ?
                                             <p className='font-bold text-xs bg-indigo-50 border-2 text-indigo-500 border-indigo-500 uppercase rounded-lg inline-block py-1 px-5'>Manager</p> :
                                             <p className='font-bold text-xs bg-green-50 border-2 text-green-500 border-green-500 uppercase rounded-lg inline-block py-1 px-5'>Colaborador</p>
                                         }
@@ -92,7 +91,7 @@ export default function DashboardView() {
                                                     Ver Proyecto
                                                 </span>
                                             </Menu.Item>
-                                            {project.manager === user._id && (
+                                            {isManager(project.manager, user._id) && (
                                                 <div>
                                                     <Menu.Item as="a" href={`/projects/${project._id}/edit`}>
                                                         <span className="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-100">

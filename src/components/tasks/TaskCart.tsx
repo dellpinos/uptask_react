@@ -8,10 +8,11 @@ import { deleteTask } from '@/api/TaskAPI';
 import { toast } from 'react-toastify';
 
 type TaskCartProps = {
-    task: Task
+    task: Task,
+    canEdit: boolean
 }
 
-export default function TaskCart({ task }: TaskCartProps) {
+export default function TaskCart({ task, canEdit }: TaskCartProps) {
 
     const navigate = useNavigate();
 
@@ -21,10 +22,10 @@ export default function TaskCart({ task }: TaskCartProps) {
 
     const { mutate } = useMutation({
         mutationFn: deleteTask,
-        onError: ( error ) => {
+        onError: (error) => {
             toast.error(error.message);
         },
-        onSuccess: ( data ) => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['project', projectId] });
             toast.success(data);
             navigate(location.pathname, { replace: true });
@@ -39,6 +40,7 @@ export default function TaskCart({ task }: TaskCartProps) {
                 <button
                     type="button"
                     className="font-bold text-slate-600 text-left text-lg"
+                    onClick={() => { navigate(location.pathname + `?viewTask=${task._id}`) }}
                 >{task.name}</button>
                 <p className="text-slate-500 text-sm">{task.description}</p>
             </div>
@@ -55,33 +57,36 @@ export default function TaskCart({ task }: TaskCartProps) {
                         <Menu.Items
                             className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                             <Menu.Item>
-                                <button 
-                                    type='button' 
+                                <button
+                                    type='button'
                                     className='block px-3 py-1 text-sm leading-6 text-gray-900'
-                                    onClick={() => { navigate(location.pathname + `?viewTask=${task._id}`)}}
-                                    >
+                                    onClick={() => { navigate(location.pathname + `?viewTask=${task._id}`) }}
+                                >
                                     Ver Tarea
                                 </button>
                             </Menu.Item>
-                            <Menu.Item>
-                                <button 
-                                    type='button' 
-                                    className='block px-3 py-1 text-sm leading-6 text-gray-900'
-                                    onClick={()=> { navigate(location.pathname + `?editTask=${task._id}`)}}
-                                    >
-                                    Editar Tarea
-                                </button>
-                            </Menu.Item>
-
-                            <Menu.Item>
-                                <button 
-                                    type='button' 
-                                    className='block px-3 py-1 text-sm leading-6 text-red-500'
-                                    onClick={() => mutate({projectId, taskId: task._id})}
-                                    >
-                                    Eliminar Tarea
-                                </button>
-                            </Menu.Item>
+                            {canEdit && (
+                                <>
+                                    <Menu.Item>
+                                        <button
+                                            type='button'
+                                            className='block px-3 py-1 text-sm leading-6 text-gray-900'
+                                            onClick={() => { navigate(location.pathname + `?editTask=${task._id}`) }}
+                                        >
+                                            Editar Tarea
+                                        </button>
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        <button
+                                            type='button'
+                                            className='block px-3 py-1 text-sm leading-6 text-red-500'
+                                            onClick={() => mutate({ projectId, taskId: task._id })}
+                                        >
+                                            Eliminar Tarea
+                                        </button>
+                                    </Menu.Item>
+                                </>
+                            )}
                         </Menu.Items>
                     </Transition>
                 </Menu>

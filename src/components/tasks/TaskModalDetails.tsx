@@ -22,7 +22,7 @@ export default function TaskModalDetails() {
 
     const { data, isError, error } = useQuery({
         queryKey: ['task', taskId],
-        queryFn: () => getTaskById({projectId, taskId}),
+        queryFn: () => getTaskById({ projectId, taskId }),
         enabled: !!taskId
     });
 
@@ -35,8 +35,8 @@ export default function TaskModalDetails() {
         },
         onSuccess: (data) => {
             toast.success(data);
-            queryClient.invalidateQueries({ queryKey: ['project', projectId]});
-            queryClient.invalidateQueries({ queryKey: ['task', taskId]});
+            queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+            queryClient.invalidateQueries({ queryKey: ['task', taskId] });
 
         }
     });
@@ -54,15 +54,15 @@ export default function TaskModalDetails() {
         mutate(data);
     }
 
-    if( isError) {
-        toast.error(error.message, {toastId: 'error'} );
+    if (isError) {
+        toast.error(error.message, { toastId: 'error' });
         return <Navigate to={`/projects/${projectId}`} />
     }
-  
+
     if (data) return (
         <>
             <Transition appear show={show} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={() => { navigate(location.pathname, {replace: true})}}>
+                <Dialog as="div" className="relative z-10" onClose={() => { navigate(location.pathname, { replace: true }) }}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -95,16 +95,23 @@ export default function TaskModalDetails() {
                                     >{data.name}
                                     </Dialog.Title>
                                     <p className='text-lg text-slate-500 mb-2'>Descripción: {data.description}</p>
+                                    {data.completedBy && (
+                                        <p>
+                                            <span className='font-bold text-slate-600'>Estado actualizado por: </span>
+                                            {' '}
+                                            {data.completedBy.name}
+                                        </p>
+                                    )}
                                     <div className='my-5 space-y-3'>
                                         <label className='font-bold'>Estado Actual: </label>
-                                        <select 
-                                            className='w-full p-3 bg-white border border-gray-300' 
+                                        <select
+                                            className='w-full p-3 bg-white border border-gray-300'
                                             defaultValue={data.status}
                                             onChange={handleChange}
-                                            >
-                                                {Object.entries(statusTranslations).map(([key, value]) => (
-                                                    <option key={key} value={key}>{value}</option>
-                                                ))}
+                                        >
+                                            {Object.entries(statusTranslations).map(([key, value]) => (
+                                                <option key={key} value={key}>{value}</option>
+                                            ))}
 
 
                                         </select>
