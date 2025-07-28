@@ -4,9 +4,10 @@ import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getTaskById, updateStatus } from '@/api/TaskAPI';
 import { toast } from 'react-toastify';
-import { formDate, diffForHumans } from '@/utils/utils';
+import { formatDate, diffForHumans } from '@/utils/utils';
 import { statusTranslations } from '@/locales/es';
 import { TaskStatus } from '@/types/index';
+import NotesPanel from '../notes/NotesPanel';
 
 export default function TaskModalDetails() {
 
@@ -87,7 +88,7 @@ export default function TaskModalDetails() {
                                 leaveTo="opacity-0 scale-95"
                             >
                                 <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
-                                    <p className='text-sm text-slate-400'>Agregada el: {formDate(data.createdAt)}</p>
+                                    <p className='text-sm text-slate-400'>Agregada el: {formatDate(data.createdAt)}</p>
                                     <p className='text-sm text-slate-400'>Última actualización: {diffForHumans(data.updatedAt)}</p>
                                     <Dialog.Title
                                         as="h3"
@@ -95,15 +96,19 @@ export default function TaskModalDetails() {
                                     >{data.name}
                                     </Dialog.Title>
                                     <p className='text-lg text-slate-500 mb-2'>Descripción: {data.description}</p>
-                                    <p className='text-2xl text-slate-500 mb-2'>Historial de Cambios</p>
-                                    <ul className='list-decimal'>
-                                        {data.completedBy.map((activityLog) => (
-                                            <li key={activityLog._id}>
-                                                <span className='font-bold text-slate-600'>{statusTranslations[activityLog.status]} </span>
-                                                {' '} por: {activityLog.user.name}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    {data.completedBy.length ? (
+                                        <>
+                                            <p className='font-bold text-2xl text-slate-600 my-5'>Historial de Cambios</p>
+                                            <ul className='list-decimal'>
+                                                {data.completedBy.map((activityLog) => (
+                                                    <li key={activityLog._id}>
+                                                        <span className='font-bold text-slate-600'>{statusTranslations[activityLog.status]} </span>
+                                                        {' '} por: {activityLog.user.name}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    ) : null}
                                     <div className='my-5 space-y-3'>
                                         <label className='font-bold'>Estado Actual: </label>
                                         <select
@@ -118,6 +123,9 @@ export default function TaskModalDetails() {
 
                                         </select>
                                     </div>
+                                    <NotesPanel 
+                                        notes={data.notes}
+                                    />
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
