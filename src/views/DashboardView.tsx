@@ -1,14 +1,17 @@
-import { Fragment } from 'react'
-import { Menu, MenuButton, Transition, MenuItems } from '@headlessui/react'
-import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
-import { Link } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllProjects, deleteProject } from "@/api/ProjectAPI";
-import { toast } from 'react-toastify';
+import { Fragment } from 'react';
+import { Menu, MenuButton, Transition, MenuItems } from '@headlessui/react';
+import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getAllProjects } from "@/api/ProjectAPI";
 import { useAuth } from '@/hooks/useAuth';
 import { isManager } from '@/utils/policies';
+import DeleteProjectModal from '@/components/projects/DeleteProjectModal';
 
 export default function DashboardView() {
+
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const { data: user, isLoading: authLoading } = useAuth();
     const { data, isLoading } = useQuery({
@@ -16,25 +19,7 @@ export default function DashboardView() {
         queryFn: getAllProjects
     });
 
-    const queryClient = useQueryClient();
-    const { mutate } = useMutation({
-        mutationFn: deleteProject,
-        onSuccess: (data) => {
-            toast.success(data);
-            queryClient.invalidateQueries({ queryKey: ['projects'] });
-
-        },
-        onError: (error) => {
-            toast.error(error.message);
-        }
-    })
-
-    const handleDelete = (projectId: string) => {
-        mutate(projectId)
-    }
-
     if (isLoading && authLoading) return 'Cargando...'
-
 
     if (data && user) return (
         <>
@@ -102,7 +87,7 @@ export default function DashboardView() {
                                                         <button
                                                             type="button"
                                                             className="block w-full text-left px-3 py-1 text-sm leading-6 text-red-500 hover:bg-slate-100"
-                                                            onClick={() => handleDelete(project._id)}
+                                                            onClick={() => navigate(location.pathname + `?deleteProject=${project._id}`)}
                                                         >
                                                             Eliminar Proyecto
                                                         </button>
@@ -122,6 +107,8 @@ export default function DashboardView() {
                     <Link className="text-fuchsia-500 font-bold" to={'/projects/create'}>Crear Proyecto</Link>
                 </p>
             )}
+
+            <DeleteProjectModal/>
         </>
     )
 }
