@@ -38,7 +38,6 @@ export default function TaskModalDetails() {
             toast.success(data);
             queryClient.invalidateQueries({ queryKey: ['project', projectId] });
             queryClient.invalidateQueries({ queryKey: ['task', taskId] });
-
         }
     });
 

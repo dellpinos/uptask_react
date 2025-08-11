@@ -1,4 +1,4 @@
-import { getProjectById } from "@/api/ProjectAPI";
+import { getFullProject } from "@/api/ProjectAPI";
 import { Navigate, useNavigate, useParams, useLocation, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import AddTaskModal from "@/components/tasks/AddTaskModal";
@@ -20,12 +20,12 @@ export default function ProjectDetailsView() {
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['project', projectId],
-        queryFn: () => getProjectById(projectId)
+        queryFn: () => getFullProject(projectId)
     });
 
     const canEdit = useMemo(() => data?.manager === user?._id, [data, user]);
 
-    if (isLoading && authLoading) return 'Cargando...';
+    if (isLoading || authLoading) return 'Cargando...';
     if (isError) return <Navigate to='/404' />
 
     if (data && user) return (
@@ -46,7 +46,6 @@ export default function ProjectDetailsView() {
                     >Colaboradores</Link>
                 </nav>
             )}
-
 
             <TaskList
                 tasks={data.tasks}

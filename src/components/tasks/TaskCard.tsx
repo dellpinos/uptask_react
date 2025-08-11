@@ -3,13 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Menu, Transition } from '@headlessui/react';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
-import { Task } from "@/types/index";
+import { TaskProject } from "@/types/index";
 import { deleteTask } from '@/api/TaskAPI';
 import { toast } from 'react-toastify';
 import { useDraggable } from '@dnd-kit/core';
 
 type TaskCartProps = {
-    task: Task,
+    task: TaskProject,
     canEdit: boolean
 }
 
@@ -37,18 +37,21 @@ export default function TaskCart({ task, canEdit }: TaskCartProps) {
     });
 
     const style = transform ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        borderRadius: '10px',
+        boxShadow: '0 0 5px gray',
+        minWidth: "150px"
     } : undefined;
 
 
     return (
-        <li className="p-4 bg-white border-slate-300 flex justify-between gap-3">
+        <li className="p-2 bg-white border-slate-300 flex justify-between gap-3">
             <div
                 {...listeners}
                 {...attributes}
                 ref={setNodeRef}
                 style={style}
-                className="min-w-0 flex flex-col gap-y-4">
+                className="p-4 bg-white border-slate-300 min-w-0 flex flex-col gap-y-4">
                 <button
                     type="button"
                     className="font-bold text-slate-600 text-left text-lg"
